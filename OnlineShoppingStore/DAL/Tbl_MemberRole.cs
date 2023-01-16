@@ -15,7 +15,10 @@ namespace OnlineShoppingStore.DAL
     public partial class Tbl_MemberRole
     {
         public int MemberRoleID { get; set; }
-        public Nullable<int> memberId { get; set; }
         public Nullable<int> RoleId { get; set; }
+        public Nullable<int> MemberId { get; set; }
+    
+        public virtual Tbl_Members Tbl_Members { get; set; }
+        public virtual Tbl_Roles Tbl_Roles { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Web;
 
@@ -10,7 +12,7 @@ namespace OnlineShoppingStore.Models
     {
         public int ShippingDetailId { get; set; }
         [Required]
-        public Nullable<int> MemberId { get; set; }
+        public Nullable<int> MemberId { get; set;}
         [Required]
         public string Adress { get; set; }
         [Required]

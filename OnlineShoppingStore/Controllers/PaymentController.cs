@@ -1,8 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
+using OnlineShoppingStore.DAL;
+using OnlineShoppingStore.Models;
+using OnlineShoppingStore.Models.Home;
+using OnlineShoppingStore.Repository;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
 using PayPal.Api;
 
 namespace OnlineShoppingStore.Controllers
@@ -10,139 +20,81 @@ namespace OnlineShoppingStore.Controllers
     public class PaymentController : Controller
     {
         // GET: Payment
-        public ActionResult PaymentWithPapal()
+        public ActionResult PaymentWithPapal2()
         {
-
-            APIContext apicontext = PaypalConfiguration.GetAPIContext();
-            try
-            {
-
-                string PayerId = Request.Params["PayerID"];
-                if (string.IsNullOrEmpty(PayerId) && PayerId!=null)
-                {
-                    string baseURi = Request.Url.Scheme + "://" + Request.Url.Authority +
-                                     "PaymentWithPapal/PaymentWithPapal?";
-
-                    var Guid = Convert.ToString((new Random()).Next(100000000));
-                    var createPayment = this.CreatePayment(apicontext, baseURi + "guid=" + Guid);
-
-                    var links = createPayment.links.GetEnumerator();
-                    string paypalRedirectURL = null;
-
-                    while (links.MoveNext())
-                    {
-                        Links lnk = links.Current;
-
-                        if (lnk.rel.ToLower().Trim().Equals("approval_url"))
-                        {
-                            paypalRedirectURL = lnk.href;
-                        }
-
-
-                    }
-                }
-                else
-                {
-                    var guid = Request.Params["guid"];
-                    var executedPaymnt = ExecutePayment(apicontext, PayerId, Session[guid] as string);
-
-
-                    if (executedPaymnt.ToString().ToLower()!="approved")
-                    {
-                        return View("FailureView");
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-                return View("FailureView");
-
-
-                //throw;
-            }
-            return View("SuccessView");
-
+            return View();
         }
-
-        private object ExecutePayment(APIContext apicontext, string payerId, string PaymentId)
+        [HttpPost]
+        public ActionResult PaymentWithPapal2(Shippingdetail shippingdetail)
         {
-           var  paymentExecution= new PaymentExecution() {payer_id = payerId };
-            this.payment= new Payment() {id = PaymentId };
-            return this.payment.Execute(apicontext, paymentExecution);
-        }
+            dbMyOnlineShoppingEntities db = new dbMyOnlineShoppingEntities();
 
-        private PayPal.Api.Payment payment;
+            Tbl_ShippingDetails tbl = new Tbl_ShippingDetails();
+            tbl.Adress = shippingdetail.Adress;
+            tbl.MemberId = shippingdetail.MemberId;
+            tbl.City = shippingdetail.City;
+            tbl.State = shippingdetail.State;
+            tbl.Country = shippingdetail.Country;
+            tbl.ZipCode = shippingdetail.ZipCode;
+            tbl.AmountPaid = shippingdetail.AmountPaid;
+            tbl.PaymentType = shippingdetail.PaymentType;
 
-        private Payment CreatePayment(APIContext apicontext, string redirectURl)
-        {
+            db.Tbl_ShippingDetails.Add(tbl);
+            db.SaveChanges();
 
-            var ItemLIst = new ItemList() {items = new List<Item>()};
-
-            if (Session["cart"]!="")
-            {
-                List<Models.Home.Item> cart = (List<Models.Home.Item>) (Session["cart"]);
-                foreach (var item in cart)
-                {
-                    ItemLIst.items.Add(new Item()
-                    {
-                        name = item.Product.ProductName.ToString(),
-                        currency = "TK",
-                        price = item.Product.Price.ToString(),
-                        quantity = item.Product.Quantity.ToString(),
-                        sku = "sku"
-                    } );
-                   
-
-                }
+            /* Item cart = (Item)Session["cart"];
+             var shippingdetail = new Shippingdetail()
+             {
+                 ShippingDetailId = 79,
+                 MemberId = 89,
+                 Adress = frc["Adress"],
+                 City = frc["City"],
+                 State = frc["State"],
+                 Country = frc["Country"],
+                 ZipCode = frc["ZipCode"],
+                 OrderId = 10000,
+                 AmountPaid = 10000,
+                 PaymentType = "Cash",
+             };
+             ctx.Tbl_ShippingDetails.Add(shippingdetail);
+             ctx.SaveChanges();*/
 
 
-                var payer = new Payer() { payment_method = "paypal" };
+            /*var Adress = Request.Form["Adress"];
+            var City = Request.Form["City"];
+            var State = Request.Form["State"];
+            var Country = Request.Form["Country"];
+            var Zipcode = Request.Form["Zipcode"];
 
-                var redirUrl = new RedirectUrls()
-                {
-                    cancel_url = redirectURl + "&Cancel=true",
-                    return_url = redirectURl
-                };
 
-                var details = new Details()
-                {
-                    tax = "1",
-                    shipping = "1",
-                    subtotal = "1"
-                };
+            var db = ctx.Open("dbMyOnlineShoppingEntities");
+            var insertCommand = "INSERT INTO Tbl_ShippingDetails (Adress, City, State, Country, Zipcode) Values(@0, @1, @2, @3, @4)";
+            db.Execute(insertCommand, Adress, City, State, Country, Zipcode);
+            Response.Redirect("~/SuccessView");*/
 
-                var amount = new Amount()
-                {
-                    currency = "USD",
 
-                    total = Session["SesTotal"].ToString(),
-                    details = details
-                };
+            /*SqlConnection conn = new SqlConnection("Data Source=DESKTOP-M407LSF;Initial Catalog=dbMyOnlineShopping;Integrated Security=True");
 
-                var transactionList = new List<Transaction>();
-                transactionList.Add(new Transaction()
-                {
-                    description = "Transaction Description",
-                    invoice_number = "#100000",
-                    amount = amount,
-                    item_list = ItemLIst
+                conn.Open();
 
-                });
-
-                this.payment = new Payment()
-                {
-                    intent = "sale",
-                    payer = payer,
-                    transactions = transactionList,
-                    redirect_urls = redirUrl
-                };
-            }
+                SqlCommand cmd = new SqlCommand("spAddOrder", conn);
+                cmd.CommandType = CommandType.StoredProcedure;*/
 
 
 
-            return this.payment.Create(apicontext);
+            /*cmd.Parameters.AddWithValue("@Adress", shippingdetail.Adress);
+            cmd.Parameters.AddWithValue("@MemberId", shippingdetail.MemberId);
 
+
+                        SqlParameter paramAdress = new SqlParameter();
+                        paramAdress.ParameterName = "@Adress";
+                        paramAdress.Value = shippingdetail.Adress;
+                        cmd.Parameters.Add(paramAdress
+            cmd.ExecuteNonQuery();
+            conn.Close();*/
+
+            return RedirectToAction("Index","Home");
         }
     }
 }
+

@@ -18,6 +18,8 @@ namespace OnlineShoppingStore.DAL
         public Tbl_Members()
         {
             this.Tbl_ShippingDetails = new HashSet<Tbl_ShippingDetails>();
+            this.Tbl_Cart = new HashSet<Tbl_Cart>();
+            this.Tbl_MemberRole = new HashSet<Tbl_MemberRole>();
         }
     
         public int MemberId { get; set; }
@@ -32,5 +34,9 @@ namespace OnlineShoppingStore.DAL
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_ShippingDetails> Tbl_ShippingDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tbl_Cart> Tbl_Cart { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tbl_MemberRole> Tbl_MemberRole { get; set; }
     }
 }

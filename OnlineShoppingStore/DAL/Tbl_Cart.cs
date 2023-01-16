@@ -20,5 +20,7 @@ namespace OnlineShoppingStore.DAL
         public Nullable<int> CartStatusId { get; set; }
     
         public virtual Tbl_Product Tbl_Product { get; set; }
+        public virtual Tbl_CartStatus Tbl_CartStatus { get; set; }
+        public virtual Tbl_Members Tbl_Members { get; set; }
     }
 }

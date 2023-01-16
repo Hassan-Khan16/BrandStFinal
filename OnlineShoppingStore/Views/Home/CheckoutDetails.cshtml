@@ -1,4 +1,5 @@
 ﻿@using OnlineShoppingStore.Models.Home;
+
 @{
     ViewBag.Title = "CheckoutDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -25,12 +26,12 @@ else
         </thead>
         <tbody>
             @{
-    int Total = 0;
+                int Total = 0;
             }
             @foreach (Item item in (List<Item>)Session["cart"])
             {
                 int lineTotal = Convert.ToInt32(item.Quantity * item.Product.Price);
-                Total=Convert.ToInt32(@Total+lineTotal);
+                Total = Convert.ToInt32(@Total + lineTotal);
 
                 Session["SesTotal"] = Total;
 
@@ -44,33 +45,11 @@ else
 
             <tr>
                 <td colspan="4" class="text-right"><b>Total: @Total</b></td>
-              
+
             </tr>
         </tbody>
     </table>
-    <table class="table table-bordered">
-        <tr>
-            <td colspan="3" style="text-align:center;"><b>Customer information</b></td>
-        </tr>
-        
-        <tr>
-            <td>Customer Name: </td>
-            <td><input type="text" name="cusName" required/></td>
-        </tr>
-        <tr>
-            <td>Customer Phone: </td>
-            <td><input type="number" name="cusPhone" required/></td>
-        </tr>
-        <tr>
-            <td>Customer Email: </td>
-            <td><input type="email" name="cusEmail" required/></td>
-        </tr>
-        <tr>
-            <td>Customer Address: </td>
-            <td><input type="text" name="cusAddress" required/></td>
-        </tr>
-    </table>
-    <a href="@Url.Action("PaymentWithPapal", "Payment")" class="btn btn-success">Place order</a>
+    <input type="button" value="Process order" onclick="window.location = '@Url.Action("PaymentWithPapal2","Payment")'"/>
 
 }
 

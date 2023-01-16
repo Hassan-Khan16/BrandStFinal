@@ -14,7 +14,7 @@ namespace OnlineShoppingStore.DAL
     
     public partial class Tbl_Product
     {
-        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_Product()
         {
             this.Tbl_Cart = new HashSet<Tbl_Cart>();
@@ -32,7 +32,7 @@ namespace OnlineShoppingStore.DAL
         public Nullable<int> Quantity { get; set; }
         public Nullable<decimal> Price { get; set; }
     
-        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Cart> Tbl_Cart { get; set; }
         public virtual Tbl_Category Tbl_Category { get; set; }
     }

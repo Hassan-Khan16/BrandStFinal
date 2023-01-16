@@ -113,5 +113,48 @@ namespace OnlineShoppingStore.Controllers
             _unitOfWork.GetRepositoryInstance<Tbl_Product>().Add(tbl);
             return RedirectToAction("Product");
         }
+
+        public ActionResult ProductDelete(Tbl_Product tbl)
+        {
+            _unitOfWork.GetRepositoryInstance<Tbl_Product>().Remove(tbl);
+            return RedirectToAction("Product");
+        }
+
+        public ActionResult Order()
+        {
+            return View(_unitOfWork.GetRepositoryInstance<Tbl_ShippingDetails>().GetProduct());
+        }
+        public ActionResult OrderAdd()
+        {
+            ViewBag.CategoryList = GetCategory();
+            return View();
+        }
+        public ActionResult UpdateOrder(int shippingId)
+        {
+            Shippingdetail cd;
+            if (shippingId != null)
+            {
+                cd = JsonConvert.DeserializeObject<Shippingdetail>(JsonConvert.SerializeObject(_unitOfWork.GetRepositoryInstance<Tbl_ShippingDetails>().GetFirstorDefault(shippingId)));
+            }
+            else
+            {
+                cd = new Shippingdetail();
+            }
+            return View("UpdateOrder", cd);
+        }
+        public ActionResult OrderEdit(int shippingId)
+        {
+            return View(_unitOfWork.GetRepositoryInstance<Tbl_ShippingDetails>().GetFirstorDefault(shippingId));
+        }
+        [HttpPost]
+        public ActionResult OrderEdit(Tbl_ShippingDetails tbl)
+        {
+            _unitOfWork.GetRepositoryInstance<Tbl_ShippingDetails>().Update(tbl);
+            return RedirectToAction("Orders");
+        }
+        public ActionResult OrderDelete()
+        {
+            return View();
+        }
     }
 }
